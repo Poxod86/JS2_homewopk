@@ -6,11 +6,10 @@
     { title: 'Jacket', price: 350, img:'jacket.jpg' },
     { title: 'Shoes', price: 250, img:'shoes.jpg' },
   ];
-  const renderGoodsItem = (title, price, img) => {
-   return `<div class="goods-item"><img src="img/${img}" alt="${title}"><h3>${title}</h3><p>${price}</p><button class="cart-button_add" type="button">Добавить</button></div> `;
+  const renderGoodsItem = (product) => {
+   return `<div class="goods-item"><img src="img/${product.img}" alt="${product.title}"><h3>${product.title}</h3><p>${product.price}</p><button class="cart-button_add" type="button">Добавить</button></div> `;
   };
   const renderGoodsList = (list) => {
-    let goodsList = list.map(item => renderGoodsItem(item.title, item.price, item.img));
-    document.querySelector('.goods-list').innerHTML = goodsList.join('');
+    document.querySelector('.goods-list').innerHTML = (list.map(product => renderGoodsItem(product))).join('');
   }
   renderGoodsList(goods);
