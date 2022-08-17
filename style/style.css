@@ -15,6 +15,7 @@
     flex-direction: row-reverse;
     align-content: center;
     align-items: center;
+		background-color: black;
  }
  .cart-button {
 	margin: 5px 20px;
