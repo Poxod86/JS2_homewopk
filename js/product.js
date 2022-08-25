@@ -1,3 +1,4 @@
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';	
 	class GoodsItem {
 		constructor(title, price, img, id) {
 		this.title = title;
@@ -14,18 +15,29 @@
 		constructor() {
 			this.goods = [];
 			this.allProducts = [];
-			this._fetchGoods();
+			this._getProducts()
+			.then(data => {
+				this.goods = [...data];
+				this.render()
+			});
 		}
-		_fetchGoods() {
-			this.goods = [
-			{id:1, title: 'Shirt', price: 150, img:'shirt.jpg' },
-    	{id:2, title: 'Socks', price: 50, img:'socks.jpg' },
-    	{id:3, title: 'Jacket', price: 350, img:'jacket.jpg' },
-    	{id:4, title: 'Shoes', price: 250, img:'shoes.jpg' },
-			];
-		}
-		render() {
+	//	_fetchGoods() {
+	//		this.goods = [
+	//		{id:1, title: 'Shirt', price: 150, img:'shirt.jpg' },
+  //  	{id:2, title: 'Socks', price: 50, img:'socks.jpg' },
+  //  	{id:3, title: 'Jacket', price: 350, img:'jacket.jpg' },
+  //  	{id:4, title: 'Shoes', price: 250, img:'shoes.jpg' },
+	//		];
+	//	}
+	//	render() {
 			
+	_getProducts() {
+		return fetch (`${API}/catalogData.json`)
+			.then(result => result.json())
+			.catch(error => {
+				console.log(error);
+			})
+	};
 			let listHtml = '';
 			this.goods.forEach (good => {
 				const goodIthem = new GoodsItem(good.title, good.price, good.img);
