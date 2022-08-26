@@ -1,70 +1,109 @@
-	class GoodsItem {
-		constructor(title, price, img, id) {
-		this.title = title;
-		this.price = price;
-		this.img =  img;
-		this.id = id;
-		}
-		render() {
-		return `<div class="goods-item"><img src="img/${this.img}" alt="${this.title}"><h3>${this.title}</h3><p>${this.price}</p><button class="cart-button_add" type="button">Добавить</button></div> `;
-		}
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';	
+	
+class GoodsItem {
+	constructor(product, img = 'https://imgholder.ru/250*250/8493a8/adb9ca&text=IMAGE+HOLDER&font=kelson') {
+		this.title = product.product_name;
+		this.price = product.price;
+		this.img = img;
+		this.id = product.id_product;
+	}
+	render() {
+		return `<div class="goods-item"><img src="${this.img}" alt="${this.title}"><h3>${this.title}</h3><p>${this.price}</p><button class="cart-button_add" type="button">Добавить</button></div> `;
+	}
+};
+
+class GoogsList {
+	constructor() {
+		this.goods = [];
+		this.allProducts = [];
+		this._getProducts()
+			.then(data => {
+				this.goods = [...data];
+				this.render()
+			});
+	};
+
+	_getProducts() {
+		return fetch (`${API}/catalogData.json`)
+			.then(result => result.json())
+			.catch(error => {
+				console.log(error);
+		});
+	};
+	
+	render() {
+		let listHtml = '';
+		this.goods.forEach (product => {
+			const goodIthem = new GoodsItem(product);
+			listHtml +=goodIthem.render();
+		});
+		document.querySelector('.goods-list').innerHTML = listHtml;
+			
+	};
+
+	calcSum() {
+		const cardSumm = this.allProducts.reduce((accum, item) => accum += item.price, 0)
+			return cardSumm
+		};
+};
+
+
+
+class CardList {
+	constructor () {
+		this.goods = [];
+		this._clickCard();
+		this._getCardItem()
+		.then(data => { //data - объект js
+			this.goods = [...data.contents];
+			this.render()
+		});
 	}
 
-	class GoogsList {
-		constructor() {
-			this.goods = [];
-			this.allProducts = [];
-			this._fetchGoods();
-		}
-		_fetchGoods() {
-			this.goods = [
-			{id:1, title: 'Shirt', price: 150, img:'shirt.jpg' },
-    	{id:2, title: 'Socks', price: 50, img:'socks.jpg' },
-    	{id:3, title: 'Jacket', price: 350, img:'jacket.jpg' },
-    	{id:4, title: 'Shoes', price: 250, img:'shoes.jpg' },
-			];
-		}
-		render() {
-			
-			let listHtml = '';
-			this.goods.forEach (good => {
-				const goodIthem = new GoodsItem(good.title, good.price, good.img);
-				listHtml +=goodIthem.render();
+	_getCardItem() {
+		return fetch(`${API}/getBasket.json`)
+			.then(result => result.json())
+			.catch(error => {
+				console.log(error);
 			});
-			document.querySelector('.goods-list').innerHTML = listHtml;
-			
-		}
-		basketAmount() {
-			let cardSumm = 0;
-			this.goods.forEach(ithem =>{
-				cardSumm += ithem.price;
-			});
-			alert (cardSumm);
-		}
-	}
+		};
 
-	const list = new GoogsList();
-	list._fetchGoods();
+	_clickCard() {
+		document.querySelector(".cart-button").addEventListener('click', () => {
+			document.querySelector(".cart-block").classList.toggle('invisible');
+		});
+	};
+
+	render() {
+		const block = document.querySelector(".cart-block");
+		for (let product of this.goods) {
+			const productObj = new CardIthem();		
+			block.insertAdjacentHTML('beforeend', productObj.render(product));
+		}
+	};
+};
+	
+class CardIthem {
+	render(product, img = 'https://imgholder.ru/50*50/8493a8/adb9ca&text=IMAGE+HOLDER&font=kelson') {
+		return `<div class="cart-item" data-id="${product.id_product}">
+							<div class="product-bio">
+							<img src="${img}" alt="Some image">
+							<div class="product-desc">
+							<p class="product-title">${product.product_name}</p>
+							<p class="product-quantity">Quantity: ${product.quantity}</p>
+					<p class="product-single-price">$${product.price} each</p>
+					</div>
+					</div>
+					<div class="right-block">
+							<p class="product-price">$${product.quantity * product.price}</p>
+							<button class="del-btn" data-id="${product.id_product}">&times;</button>
+					</div>
+					</div>`
+		}
+};
+const list = new GoogsList();
 	list.render();
-	list.basketAmount();
-
-	class CardList {
-		constructor () {
-			this.title = title;
-			this.quantity = quantity;
-			this.price = price;
-			this.GoogsList
-		}
-		addGood(){}
-		removeGood(){}
-		render(){}
-
-	}
+	list.calcSum();
 	
-	class CardIthem {
-		constructor() {
-			this.price = price;
-		}
-		render(){}
-	}
-	
+const bask = new CardList();
+	bask.render();
