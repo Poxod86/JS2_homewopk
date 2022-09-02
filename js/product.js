@@ -16,12 +16,21 @@ class GoogsList {
 	constructor() {
 		this.goods = [];
 		this.allProducts = [];
+		this.filtered = [];
 		this._getProducts()
 			.then(data => {
 				this.goods = [...data];
 				this.render()
 			});
 	};
+
+	//fetchGoods (cb) {
+	//	makeGETRequest (`${API}/catalogData.json`), (goods) => {
+	//		this.goods =JSON.parse(goods);
+	//		this.filtered = JSON.parse(goods);
+	//		cb();
+	//	}
+	//}
 
 	_getProducts() {
 		return fetch (`${API}/catalogData.json`)
@@ -41,13 +50,33 @@ class GoogsList {
 			
 	};
 
+	filter(value){
+		const regexp = new RegExp(value, 'i');
+		this.filtered = this.allProducts.filter(product => regexp.test(product.product_name));
+		this.allProducts.forEach(el => {
+				const block = document.querySelector(`.product-item[data-id="${el.id_product}"]`);
+				if(!this.filtered.includes(el)){
+						block.classList.add('invisible');
+				} else {
+						block.classList.remove('invisible');
+				}
+		});
+	};
+
+	_init(){
+		return false
+	}
+
 	calcSum() {
 		const cardSumm = this.allProducts.reduce((accum, item) => accum += item.price, 0)
 			return cardSumm
 		};
 };
 
-
+document.querySelector(".btn-search").addEventListener ('click', (e) => {
+	const value = document.querySelector(".search-field").value;
+	list.filter(value)
+});
 
 class CardList {
 	constructor () {

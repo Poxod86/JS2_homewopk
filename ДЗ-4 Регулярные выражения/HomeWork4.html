@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Home work 4</title>
+</head>
+<body>
+	<H1>Регулярные выражения</H1>
+	<ul class="text">
+		<li>One: 'Hi Mary.'</li>
+		<li>Two: 'Oh, hi.'</li>
+		<li>One: 'How are you doing?'</li>
+		<li>Two: 'I'm doing alright. How about you?'</li>
+		<li>One: 'Not too bad. The weather is great isn't it?'</li>
+		<li>Two: 'Yes. It's absolutely beautiful today.'</li>
+		<li>One: 'I wish it was like this more frequently.'</li>
+		<li>Two: 'Me too.'</li>
+		<li>One: 'So where are you going now?'</li>
+		<li>Two: 'I'm going to meet a friend of mine at the department store.'</li>
+		<li>One: 'Going to do a little shopping?'</li>
+		<li>Two: 'Yeah, I have to buy some presents for my parents.'</li>
+		<li>One: 'What's the occasion?'</li>
+		<li>Two: 'It's their anniversary.'</li>
+		<li>One: 'That's great. Well, you better get going. You don't want to be late.'</li>
+		<li>Two: 'I'll see you next time.'</li>
+		<li>One: 'Sure. Bye.'</li>
+	</ul>
+	<h2>Задание 1</h2>
+	<p>Придумать шаблон, который заменяет одинарные кавычки на двойные</p>
+	<button class="button1">Заменить ' на "</button>
+	<h2>Задание 2</h2>
+	<p>Улучшить шаблон так, чтобы в конструкциях типа aren't одинарная кавычка не заменялась на
+двойную.</p>
+	<button class="button2">Заменить ' на " </button>
+	
+
+	<script>
+		
+	  document.querySelector(".button1").addEventListener('click', () => {
+			let str = document.querySelectorAll('.text li');
+			for (let elem of str) {
+				const regexp = /\'/g; 
+				elem.replaceChildren(elem.innerText.replace(regexp,'\"'));
+			};
+		});
+		
+		document.querySelector(".button2").addEventListener('click', () => {
+			let str = document.querySelectorAll('.text li');
+			for (let elem of str) {
+				const regexp = /\B\'/g; 
+				elem.replaceChildren(elem.innerText.replace(regexp,'\"'));
+			};
+		});
+	</script>
+</body>
+</html>
