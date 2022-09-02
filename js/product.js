@@ -1,138 +1,76 @@
-const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';	
-	
-class GoodsItem {
-	constructor(product, img = 'https://imgholder.ru/250*250/8493a8/adb9ca&text=IMAGE+HOLDER&font=kelson') {
-		this.title = product.product_name;
-		this.price = product.price;
-		this.img = img;
-		this.id = product.id_product;
-	}
-	render() {
-		return `<div class="goods-item"><img src="${this.img}" alt="${this.title}"><h3>${this.title}</h3><p>${this.price}</p><button class="cart-button_add" type="button">Добавить</button></div> `;
-	}
-};
+const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses';
 
-class GoogsList {
-	constructor() {
-		this.goods = [];
-		this.allProducts = [];
-		this.filtered = [];
-		this._getProducts()
-			.then(data => {
-				this.goods = [...data];
-				this.render()
-			});
-	};
+const app = new Vue({
+    el: '#app',
+    data: {
+        userSearch: '',
+        showCart: false,
+        catalogUrl: '/catalogData.json',
+        cartUrl: '/getBasket.json',
+        cartItems: [],
+        filtered: [],
+        imgCart: 'https://via.placeholder.com/50x100',
+        products: [],
+        imgProduct: 'https://via.placeholder.com/200x150'
+    },
+    methods: {
+        getJson(url){
+            return fetch(url)
+                .then(result => result.json())
+                .catch(error => console.log(error))
+        },
+        addProduct(item){
+            this.getJson(`${API}/addToBasket.json`)
+                .then(data => {
+                    if(data.result === 1){
+                       let find = this.cartItems.find(el => el.id_product === item.id_product);
+                       if(find){
+                           find.quantity++;
+                       } else {
+                           const prod = Object.assign({quantity: 1}, item);//создание нового объекта на основе двух, указанных в параметрах
+                           this.cartItems.push(prod)
+                       }
+                    }
+                })
+        },
+        remove(item){
+            this.getJson(`${API}/addToBasket.json`)
+                .then(data => {
+                    if (data.result === 1) {
+                        if(item.quantity>1){
+                            item.quantity--;
+                        } else {
+                            this.cartItems.splice(this.cartItems.indexOf(item), 1);
+                        }
+                    }
+                })
+        },
+        filter(){
+            let regexp = new RegExp(this.userSearch, 'i');
+            this.filtered =  this.products.filter(el => regexp.test(el.product_name));
+        }
+    },
+    mounted(){
+        this.getJson(`${API + this.cartUrl}`)
+            .then(data => {
+                for (let item of data.contents){
+                    this.cartItems.push(item);
+                }
+            });
+        this.getJson(`${API + this.catalogUrl}`)
+            .then(data => {
+                for (let item of data){
+                    this.$data.products.push(item);
+                    this.$data.filtered.push(item);
+                }
+            });
+        this.getJson(`getProducts.json`)
+            .then(data => {
+                for(let item of data){
+                    this.products.push(item);
+                    this.filtered.push(item);
+                }
+            })
+    }
 
-	//fetchGoods (cb) {
-	//	makeGETRequest (`${API}/catalogData.json`), (goods) => {
-	//		this.goods =JSON.parse(goods);
-	//		this.filtered = JSON.parse(goods);
-	//		cb();
-	//	}
-	//}
-
-	_getProducts() {
-		return fetch (`${API}/catalogData.json`)
-			.then(result => result.json())
-			.catch(error => {
-				console.log(error);
-		});
-	};
-	
-	render() {
-		let listHtml = '';
-		this.goods.forEach (product => {
-			const goodIthem = new GoodsItem(product);
-			listHtml +=goodIthem.render();
-		});
-		document.querySelector('.goods-list').innerHTML = listHtml;
-			
-	};
-
-	filter(value){
-		const regexp = new RegExp(value, 'i');
-		this.filtered = this.allProducts.filter(product => regexp.test(product.product_name));
-		this.allProducts.forEach(el => {
-				const block = document.querySelector(`.product-item[data-id="${el.id_product}"]`);
-				if(!this.filtered.includes(el)){
-						block.classList.add('invisible');
-				} else {
-						block.classList.remove('invisible');
-				}
-		});
-	};
-
-	_init(){
-		return false
-	}
-
-	calcSum() {
-		const cardSumm = this.allProducts.reduce((accum, item) => accum += item.price, 0)
-			return cardSumm
-		};
-};
-
-document.querySelector(".btn-search").addEventListener ('click', (e) => {
-	const value = document.querySelector(".search-field").value;
-	list.filter(value)
 });
-
-class CardList {
-	constructor () {
-		this.goods = [];
-		this._clickCard();
-		this._getCardItem()
-		.then(data => { //data - объект js
-			this.goods = [...data.contents];
-			this.render()
-		});
-	}
-
-	_getCardItem() {
-		return fetch(`${API}/getBasket.json`)
-			.then(result => result.json())
-			.catch(error => {
-				console.log(error);
-			});
-		};
-
-	_clickCard() {
-		document.querySelector(".cart-button").addEventListener('click', () => {
-			document.querySelector(".cart-block").classList.toggle('invisible');
-		});
-	};
-
-	render() {
-		const block = document.querySelector(".cart-block");
-		for (let product of this.goods) {
-			const productObj = new CardIthem();		
-			block.insertAdjacentHTML('beforeend', productObj.render(product));
-		}
-	};
-};
-	
-class CardIthem {
-	render(product, img = 'https://imgholder.ru/50*50/8493a8/adb9ca&text=IMAGE+HOLDER&font=kelson') {
-		return `<div class="cart-item" data-id="${product.id_product}">
-							<div class="product-bio">
-							<img src="${img}" alt="Some image">
-							<div class="product-desc">
-							<p class="product-title">${product.product_name}</p>
-							<p class="product-quantity">Quantity: ${product.quantity}</p>
-					<p class="product-single-price">$${product.price} each</p>
-					</div>
-					</div>
-					<div class="right-block">
-							<p class="product-price">$${product.quantity * product.price}</p>
-							<button class="del-btn" data-id="${product.id_product}">&times;</button>
-					</div>
-					</div>`
-		}
-};
-const list = new GoogsList();
-	list.render();
-	list.calcSum();
-	
-const bask = new CardList();
-	bask.render();
