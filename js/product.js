@@ -24,6 +24,14 @@ class GoogsList {
 			});
 	};
 
+	//fetchGoods (cb) {
+	//	makeGETRequest (`${API}/catalogData.json`), (goods) => {
+	//		this.goods =JSON.parse(goods);
+	//		this.filtered = JSON.parse(goods);
+	//		cb();
+	//	}
+	//}
+
 	_getProducts() {
 		return fetch (`${API}/catalogData.json`)
 			.then(result => result.json())
@@ -65,7 +73,10 @@ class GoogsList {
 		};
 };
 
-
+document.querySelector(".btn-search").addEventListener ('click', (e) => {
+	const value = document.querySelector(".search-field").value;
+	list.filter(value)
+});
 
 class CardList {
 	constructor () {
