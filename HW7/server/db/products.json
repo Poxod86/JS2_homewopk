@@ -1,0 +1,38 @@
+[
+  {
+    "id_product": 124,
+    "product_name": "Jacket",
+    "price": 52,
+		"img_product": "img/card/card_1.png"
+  },
+  {
+    "id_product": 125,
+    "product_name": "Suit",
+    "price": 62,
+		"img_product": "img/card/card_2.png"
+  },
+  {
+    "id_product": 126,
+    "product_name": "Hoodie",
+    "price": 48,
+		"img_product": "img/card/card_3.png"
+  },
+  {
+    "id_product": 457,
+    "product_name": "Trousers",
+    "price": 66,
+		"img_product": "img/card/card_4.png"
+  },
+	{
+    "id_product": 458,
+    "product_name": "Blazer",
+    "price": 63,
+		"img_product": "img/card/card_5.png"
+  },
+	{
+    "id_product": 459,
+    "product_name": "Blouse",
+    "price": 46,
+		"img_product": "img/card/card_6.png"
+  }
+]
