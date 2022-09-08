@@ -10,5 +10,5 @@ let change = (cart, req) => {
 
 module.exports = {
     add,
-    change,
+    change
 };
