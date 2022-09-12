@@ -18,20 +18,20 @@ Vue.component('cart', {
             });
     },
     methods: {
-        addProduct(item){
-            let find = this.cartItems.find(el => el.id_product === item.id_product);
+        addProduct(product){
+            let find = this.cartItems.find(el => el.id_product === product.id_product);
             if(find){
-                this.$parent.putJson(`/api/cart/${find.id_product}`, {quantity: 1})
+                this.$parent.putJson(`/api/cart/${ product.id_product}`, {quantity: 1})
                     .then(data => {
-                        if(data.result === 1){
+                        if(data.result){
                             find.quantity++
                         }
                     })
             } else {
-                const prod = Object.assign({quantity: 1}, item);
-                this.$parent.postJson(`/api/cart`, prod)
+                const prod = Object.assign({quantity: 1}, product);
+                this.$parent.postJson(`/api/cart/${ product.id_product}`, prod)
                     .then(data => {
-                        if(data.result === 1){
+                        if(data.result){
                             this.cartItems.push(prod)
                         }
                     })
@@ -50,7 +50,26 @@ Vue.component('cart', {
             //         }
             //     })
         },
-        remove(item){
+				remove(product) {
+					if (product.quantity > 1) {
+							this.$parent.putJson(`/api/cart/${ product.id_product }`, { quantity: -1 })
+									.then(data => {
+											if (data.result) {
+													product.quantity--;
+											}
+									})
+					} else {
+							this.$parent.delJson(`/api/cart/${ product.id_product }`, product)
+									.then(data => {
+											if (data.result) {
+													this.cartItems.splice(this.cartItems.indexOf(product), 1);
+											} else {
+													console.log('error');
+											}
+									})
+					}
+			},
+        /* remove(product){
             this.$parent.getJson(`${API}/addToBasket.json`)
                 .then(data => {
                     if (data.result === 1) {
@@ -61,7 +80,7 @@ Vue.component('cart', {
                         }
                     }
                 })
-        },
+        }, */
     },
 		template: `<a class="basket" href="#" >
 		<svg class="basket-icon" width="32" height="29" viewBox="0 0 27 25" fill="none" xmlns="http://www.w3.org/2000/svg" @click="showCart = !showCart">

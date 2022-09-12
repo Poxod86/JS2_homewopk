@@ -1759,6 +1759,7 @@ form.subscribe-form {
 .cart-item img{
 	align-self: flex-start;
 	margin-right: 15px;
+	max-width: 100px;
 }
 .product-single-price{
 	color: #474747;
